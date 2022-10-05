@@ -4,51 +4,63 @@ using UnityEngine;
 
 public class FollowPathMovement : MonoBehaviour
 {
+
+
     private List<Transform> _wayPoints = new List<Transform>();
-    private int _currentWayPoint = 0;
+    private int _currentWaypoint = 0;
     public float speed = 5f;
     public float minDistance = 0.2f;
-    
 
-
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
+        _wayPoints.Clear();
+        _currentWaypoint = 0;
+        
 
-        var waypointParent = GameObject.Find("Path");
-        for (int i = 0; i < waypointParent.transform.childCount; i++)
+    }
+    // Start is called before the first frame update
+    public void InitEnemy(string pathName)
+    {
+        var waypointParent = GameObject.Find(pathName);
+
+        for(int i = 0; i< waypointParent.transform.childCount; i++)
         {
             _wayPoints.Add(waypointParent.transform.GetChild(i));
-
         }
 
+
         StartCoroutine(MoveToNextWaypoint());
+
+
     }
 
+    // Update is called once per frame
+    //void Update()
+    
     private IEnumerator MoveToNextWaypoint()
     {
-        var distance = Vector3.Distance(transform.position,
-            _wayPoints[_currentWayPoint].position);
+        var distance = Vector3.Distance(transform.position, _wayPoints[_currentWaypoint].position);
+
         while (Mathf.Abs(distance) > minDistance)
         {
-            transform.position = Vector3.MoveTowards(transform.position,
-                _wayPoints[_currentWayPoint].position, Time.deltaTime * speed);
+            transform.position = Vector3.MoveTowards(transform.position, _wayPoints[_currentWaypoint].position, Time.deltaTime * speed);
 
-            distance = Vector3.Distance(transform.position, _wayPoints[_currentWayPoint].position);
-
-
+            distance = Vector3.Distance(transform.position, _wayPoints[_currentWaypoint].position);
 
             yield return null;
 
+            
+
         }
 
-        if (_currentWayPoint < _wayPoints.Count - 1)
+        if (_currentWaypoint < _wayPoints.Count - 1)
         {
-            _currentWayPoint++; 
+            _currentWaypoint++;
             StartCoroutine(MoveToNextWaypoint());
         }
 
 
     }
-
+        
+    
 }
